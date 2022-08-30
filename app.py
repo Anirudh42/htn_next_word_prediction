@@ -8,7 +8,6 @@ import random
 nltk.download("reuters")
 
 model = defaultdict(lambda: defaultdict(lambda:0))
-
 print("Learning the corpus...")
 for sents in brown.sents():
     for w1,w2,w3 in ngrams(sents,3,pad_left=True,pad_right=True):
@@ -19,8 +18,6 @@ for i in model:
     for j in model[i]:
         model[i][j]/=total
 
-text = ["primary", "election"]
-full_text = ["primary", "election"]
 app = Flask(__name__)
 
 @app.route("/")
@@ -45,7 +42,7 @@ def generate_sentence():
 @app.route("/generate_two")
 def generate_sentence_two(text):
     if not text:
-        return "Please enter two words"
+        return 0
     sentence_finished = False
     while not sentence_finished:
         # select a random probability threshold  
@@ -68,16 +65,23 @@ def generate_sentence_two(text):
 
 @app.route("/generate_user",methods=["GET","POST"])
 def generate_user_input():
-    last_two = []
-    temp_list=0
+    temp_list = 0
+    hold_previous = []
+    with open("temp_storage.txt","r") as f:
+        hold_previous = f.readlines()
     if request.method=="POST":
         text = request.form['userinput']
         text = text.split()
-        if last_two:
-            temp_list = generate_sentence_two(last_two)
+        if hold_previous:
+            hold_previous = hold_previous[-1].split(" ")
+            temp_list = generate_sentence_two(hold_previous[-2:])
         else:
             temp_list = generate_sentence_two(text)
-            last_two = temp[-2:]
+            if text:
+                with open("temp_storage.txt","w") as f:
+                    for i in temp_list:
+                        f.writelines(i + " ")
+            
         temp = ' '.join(temp_list)
         return render_template("user_input.html",data=temp)
     print("Clicked")
