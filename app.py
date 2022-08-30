@@ -44,6 +44,8 @@ def generate_sentence():
 
 @app.route("/generate_two")
 def generate_sentence_two(text):
+    if not text:
+        return "Please enter two words"
     sentence_finished = False
     while not sentence_finished:
         # select a random probability threshold  
@@ -61,15 +63,24 @@ def generate_sentence_two(text):
         if text[-2:] == [None, None]:
             sentence_finished = True
  
-    return ' '.join([t for t in text if t])
+    return [t for t in text if t]
 
 
 @app.route("/generate_user",methods=["GET","POST"])
 def generate_user_input():
+    last_two = []
+    temp_list=0
     if request.method=="POST":
         text = request.form['userinput']
         text = text.split()
-        temp = generate_sentence_two(text)
+        if last_two:
+            temp_list = generate_sentence_two(last_two)
+        else:
+            temp_list = generate_sentence_two(text)
+            last_two = temp[-2:]
+        temp = ' '.join(temp_list)
+        return render_template("user_input.html",data=temp)
+    print("Clicked")
     return render_template("user_input.html")
 
 if __name__=="__main__":
