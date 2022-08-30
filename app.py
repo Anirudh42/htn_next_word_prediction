@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, request, render_template
 from nltk.corpus import reuters, brown
 from nltk.util import ngrams
 import nltk
@@ -43,7 +43,7 @@ def generate_sentence():
     
 
 @app.route("/generate_two")
-def generate_sentence_two():
+def generate_sentence_two(text):
     sentence_finished = False
     while not sentence_finished:
         # select a random probability threshold  
@@ -63,5 +63,14 @@ def generate_sentence_two():
  
     return ' '.join([t for t in text if t])
 
+
+@app.route("/generate_user",methods=["GET","POST"])
+def generate_user_input():
+    if request.method=="POST":
+        text = request.form['userinput']
+        text = text.split()
+        temp = generate_sentence_two(text)
+    return render_template("user_input.html")
+
 if __name__=="__main__":
-    app.run(host="0.0.0.0",port=8080,debug=True)
+    app.run(host="0.0.0.0",port=8080)
