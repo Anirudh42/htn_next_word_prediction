@@ -18,7 +18,25 @@ for i in model:
     for j in model[i]:
         model[i][j]/=total
 
+with open("temp_storage.txt","w") as f:
+    pass
+
 app = Flask(__name__)
+
+
+def fetch_current_words():
+    hold_previous = []
+    with open("temp_storage.txt","r") as f:
+        hold_previous = f.readlines()
+    if hold_previous:
+        hold_previous = hold_previous[-1].strip().split(" ")
+    print('here current')
+    return hold_previous[-2:]
+
+def fetch_all():
+    print("here all")
+    with open("temp_storage.txt","r") as f:
+        return ' '.join(f.readlines())
 
 @app.route("/")
 def hello_world():
@@ -42,15 +60,17 @@ def generate_sentence():
 @app.route("/generate_two")
 def generate_sentence_two(text):
     if not text:
-        return 0
+        text = list(model.keys())[random.randint(0,len(model))]
+    if not model[tuple(text[-2:])].keys():
+        text = list(model.keys())[random.randint(0,len(model))]
+    text = [text[0],text[1]]
+    print(text)
     sentence_finished = False
     while not sentence_finished:
         # select a random probability threshold  
         r = random.random()
         accumulator = .05
-
         for word in model[tuple(text[-2:])].keys():
-        #       print(r,accumulator,text[-2:],word)
             accumulator += model[tuple(text[-2:])][word]
             # select words that are above the probability threshold
             if accumulator >= r:
@@ -59,33 +79,72 @@ def generate_sentence_two(text):
 
         if text[-2:] == [None, None]:
             sentence_finished = True
- 
     return [t for t in text if t]
 
 
 @app.route("/generate_user",methods=["GET","POST"])
 def generate_user_input():
     temp_list = 0
-    hold_previous = []
-    with open("temp_storage.txt","r") as f:
-        hold_previous = f.readlines()
     if request.method=="POST":
+        hold_previous = fetch_current_words()
         text = request.form['userinput']
         text = text.split()
         if hold_previous:
-            hold_previous = hold_previous[-1].split(" ")
-            temp_list = generate_sentence_two(hold_previous[-2:])
+            print("Calling with previous")
+            print("Previous:",hold_previous)
+            temp_list = generate_sentence_two(hold_previous)
         else:
+            print("Calling with entered input")
+            print("Text:",text)
             temp_list = generate_sentence_two(text)
-            if text:
-                with open("temp_storage.txt","w") as f:
-                    for i in temp_list:
-                        f.writelines(i + " ")
+        if temp_list[0]!="0":
+            with open("temp_storage.txt","a") as f:
+                for i in temp_list:
+                    f.writelines(i + " ")
             
         temp = ' '.join(temp_list)
         return render_template("user_input.html",data=temp)
-    print("Clicked")
     return render_template("user_input.html")
 
+def helper(text,flag):
+    if not text:
+        text = list(model.keys())[random.randint(0,len(model))]
+    if not model[tuple(text[-2:])].keys():
+        text = list(model.keys())[random.randint(0,len(model))]
+    if list(model[tuple(text[-2:])].keys())[0]==None:
+        text = list(model.keys())[random.randint(0,len(model))]
+    print(text)
+    print(model[tuple(text[-2:])].keys())
+    text = [text[0],text[1]]
+    next_word_possibilities = sorted(dict(model[tuple(text[-2:])]).items(),key = lambda x:x[1],reverse=True)[:3]
+    size = len(next_word_possibilities)
+    next_word = next_word_possibilities[random.randint(0,size-1)][0]
+    text.append(next_word)
+    with open("temp_storage.txt","a") as f:
+        if flag==0:
+            if next_word!=None:
+                f.writelines(next_word + " ")
+        else:
+            for i in text:
+                if i!=None:
+                    f.writelines(i + " ")
+
+@app.route("/generate_next",methods=["GET","POST"])
+def generate_next():
+    print(request.method)
+    if request.method=="POST":
+        print("Inside post")
+        hold_previous = fetch_current_words()
+        text = request.form['userinput']
+        text = text.split()
+        if hold_previous:
+            helper(hold_previous,0)
+        else:
+            helper(text,1)
+        temp = fetch_all()
+        return render_template("user_input.html",data=temp)
+    with open("temp_storage.txt","w") as f:
+        pass
+    return render_template("user_input.html")
 if __name__=="__main__":
     app.run(host="0.0.0.0",port=8080)
