@@ -5,8 +5,8 @@ import nltk
 from collections import defaultdict, Counter
 import random
 
-nltk.download("reuters")
-
+#These will run when the app starts
+nltk.download("brown")
 model = defaultdict(lambda: defaultdict(lambda:0))
 print("Learning the corpus...")
 for sents in brown.sents():
@@ -43,44 +43,27 @@ def fetch_all():
 def hello_world():
 
     return render_template("index.html")
-
-# @app.route("/generate")
-# def generate_sentence():
-#     for _ in range(100):
-#         next_word_possibilities = sorted(dict(model[tuple(text[-2:])]).items(),key = lambda x:x[1],reverse=True)[:3]
-#         size = len(next_word_possibilities)
-#         next_word = next_word_possibilities[random.randint(0,size-1)][0]
-#         text.append(next_word)
-#         if text[-2:]==[None,None]:
-#             break
-#         if next_word!=None:    
-#             full_text.append(next_word)
-#     return ' '.join(full_text)
     
 
-# @app.route("/generate_two")
-# def generate_sentence_two(text):
-#     if not text:
-#         text = list(model.keys())[random.randint(0,len(model))]
-#     if not model[tuple(text[-2:])].keys():
-#         text = list(model.keys())[random.randint(0,len(model))]
-#     text = [text[0],text[1]]
-#     print(text)
-#     sentence_finished = False
-#     while not sentence_finished:
-#         # select a random probability threshold  
-#         r = random.random()
-#         accumulator = .05
-#         for word in model[tuple(text[-2:])].keys():
-#             accumulator += model[tuple(text[-2:])][word]
-#             # select words that are above the probability threshold
-#             if accumulator >= r:
-#                 text.append(word)
-#                 break
+@app.route("/generate_random")
+def generate_random():
+    text = list(model.keys())[random.randint(0,len(model))]
+    text = [text[0],text[1]]
+    sentence_finished = False
+    while not sentence_finished:
+        # select a random probability threshold  
+        r = random.random()
+        accumulator = .05
+        for word in model[tuple(text[-2:])].keys():
+            accumulator += model[tuple(text[-2:])][word]
+            # select words that are above the probability threshold
+            if accumulator >= r:
+                text.append(word)
+                break
 
-#         if text[-2:] == [None, None]:
-#             sentence_finished = True
-#     return [t for t in text if t]
+        if text[-2:] == [None, None]:
+            sentence_finished = True
+    return ' '.join([t for t in text if t])
 
 
 
