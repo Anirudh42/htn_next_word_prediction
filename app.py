@@ -43,10 +43,8 @@ def fetch_current_words():
 
 def fetch_all():
     '''Function to fetch the entire text from the text file'''
-    print("Getting full text")
-    full_text = ""
-    with open("temp_storage.txt","r") as f:
-        full_text = ' '.join(f.readlines())
+    # Open the text file and read all the text into a variable, return the variable
+
     return full_text
 
 @app.route("/")
@@ -55,6 +53,7 @@ def hello_world():
     return render_template("index.html")
     
 
+# This will not be the focus of this workshop
 @app.route("/generate_random")
 def generate_random():
     '''
@@ -80,25 +79,23 @@ def generate_random():
 
 
 
+# We will only focus on the following two functions during this workshop
 def helper(text,flag):
     '''
     This function executes the logic to fetch the next possible word, given the current bi-gram/phrase
     '''
     # Start with a random bi-gram if user does not enter any text
-    if not text:
-        text = list(model.keys())[random.randint(0,len(model))]
+
     # Pick a random bi-gram if the current phrase does not have a value(next possible word) in the model
-    if not model[tuple(text[-2:])].keys():
-        text = list(model.keys())[random.randint(0,len(model))]
+
     # Pick a random bi-gram if the current phrase does not have a value(next possible word) in the model
     if list(model[tuple(text[-2:])].keys())[0]==None:
         text = list(model.keys())[random.randint(0,len(model))]
     text = [text[0],text[1]]
     # Sort all the keys for the current bi-gram and pick the top 3 next possible words
-    next_word_possibilities = sorted(dict(model[tuple(text[-2:])]).items(),key = lambda x:x[1],reverse=True)[:3]
-    size = len(next_word_possibilities)
+
     # From the top 3, pick a random next word
-    next_word = next_word_possibilities[random.randint(0,size-1)][0]
+
     # Store the next word along with the previous two words in the list and write it to a file
     text.append(next_word)
     with open("temp_storage.txt","a") as f:
@@ -116,27 +113,27 @@ def generate_next():
     This function takes in the user input or existing phrase and uses it to predict the next word
     '''
     # this method is executed when user provides data in the text box and CLICKS generate
-    if request.method=="POST":
+    if :
         # Fetch the current words from the file if there are any
-        hold_previous = fetch_current_words()
+        hold_previous = 
         # Fetch the user input from the text box
-        text = request.form['userinput']
+        text = 
         text = text.split()
         # If a phrase exists previously, then use it to predict the next word
         if hold_previous:
-            helper(hold_previous,0)
+            helper(,0)
         # If there is not phrase the use the user input form the text box
         else:
-            helper(text,1)
+            helper(,1)
         # Fetch the complete sentence that has been written to the text file
-        temp = fetch_all()
+        temp = 
         # Send the data to the HTML page and display the result on screen
-        return render_template("user_input.html",data=temp)
+        return 
     # If the page is refreshed without clicking the Generate button, 
     # then delete the contents of the text file and start new
     with open("temp_storage.txt","w") as f:
         pass
-    return render_template("user_input.html")
+    return 
 
 if __name__=="__main__":
     app.run(host="0.0.0.0",port=5000)
