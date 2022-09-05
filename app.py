@@ -36,6 +36,7 @@ def fetch_current_words():
     hold_previous = []
     with open("temp_storage.txt","r") as f:
         hold_previous = f.readlines()
+    # If there is text present in the file, then split it and fetch the most recent words
     if hold_previous:
         hold_previous = hold_previous[-1].strip().split(" ")
     return hold_previous[-2:]
