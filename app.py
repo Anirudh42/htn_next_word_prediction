@@ -45,7 +45,7 @@ def fetch_all():
     '''Function to fetch the entire text from the text file'''
     # Open the text file and read all the text into a variable, return the variable
 
-    return full_text
+    return False
 
 @app.route("/")
 def hello_world():
@@ -113,27 +113,27 @@ def generate_next():
     This function takes in the user input or existing phrase and uses it to predict the next word
     '''
     # this method is executed when user provides data in the text box and CLICKS generate
-    if :
+    if False:
         # Fetch the current words from the file if there are any
-        hold_previous = 
+        hold_previous = "Fill here"
         # Fetch the user input from the text box
-        text = 
+        text = "Fill here"
         text = text.split()
         # If a phrase exists previously, then use it to predict the next word
         if hold_previous:
-            helper(,0)
+            "Execute logic here"
         # If there is not phrase the use the user input form the text box
         else:
-            helper(,1)
+            "Execute logic here"
         # Fetch the complete sentence that has been written to the text file
-        temp = 
+        temp = "Fill here"
         # Send the data to the HTML page and display the result on screen
-        return 
+        return False
     # If the page is refreshed without clicking the Generate button, 
     # then delete the contents of the text file and start new
     with open("temp_storage.txt","w") as f:
         pass
-    return 
+    return False
 
 if __name__=="__main__":
     app.run(host="0.0.0.0",port=5000)
