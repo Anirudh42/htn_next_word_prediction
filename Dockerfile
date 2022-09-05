@@ -1,7 +1,7 @@
-FROM python:3.6
+FROM 
 COPY . /app
-WORKDIR /app
-RUN pip install -r requirements.txt
+WORKDIR 
+RUN 
 ENTRYPOINT ["python"]
 CMD ["app.py"]
 EXPOSE 5000
