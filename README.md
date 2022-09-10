@@ -1,14 +1,10 @@
 # Next Word Prediction App - Hack the North Workshop
 
-# A very simple Text autocomplete application
-
-
-
-# This repo uses Docker and Flask to build the application.
+## A very simple Text autocomplete application. This repo uses Docker and Flask to build the application.
 
 ## Steps:
 
-### Without using Docker:
+#### Without using Docker:
 1. Clone the repository ````git clone https://github.com/Anirudh42/htn_next_word_prediction.git````
 2. Download and install the ````pip```` package manager from here https://pip.pypa.io/en/stable/installation/ 
 3. Install the packages with the command ````pip install requirements.txt````. Make sure you have the ````requirements.txt```` file
